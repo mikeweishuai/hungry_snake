@@ -1,10 +1,13 @@
 package com.example.android.hungrysnake;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -14,6 +17,7 @@ import android.content.res.AssetManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.view.View;
 
 
 class SnakeEngine extends SurfaceView implements Runnable {
@@ -80,8 +84,11 @@ class SnakeEngine extends SurfaceView implements Runnable {
     // Some paint for our canvas
     private Paint paint;
 
-    public SnakeEngine(Context context, Point size) {
-        super(context);
+    private Activity myActivity;
+
+    public SnakeEngine(Context context, Point size, Activity activity, AttributeSet attrs) {
+        super(context, attrs);
+        myActivity = activity;
 
         context = context;
 
@@ -138,6 +145,8 @@ class SnakeEngine extends SurfaceView implements Runnable {
 
         }
     }
+
+
 
     public void pause() {
         isPlaying = false;
@@ -257,10 +266,18 @@ class SnakeEngine extends SurfaceView implements Runnable {
         moveSnake();
 
         if (detectDeath()) {
-            //start again
-            soundPool.play(snake_crash, 1, 1, 0, 0, 1);
+            myActivity.runOnUiThread(new Runnable() {
 
-            newGame();
+                @Override
+                public void run() {
+
+                    // Stuff that updates the UI
+
+                    myActivity.setContentView(R.layout.activity_game_over);
+                }
+            });
+
+//            newGame();
         }
     }
 
@@ -359,5 +376,7 @@ class SnakeEngine extends SurfaceView implements Runnable {
         }
         return true;
     }
+
+
 
 }
