@@ -1,6 +1,7 @@
 package com.example.android.hungrysnake;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.graphics.Point;
@@ -41,5 +42,10 @@ public class SnakeActivity extends Activity {
     protected void onPause() {
         super.onPause();
         mSnakeEngine.pause();
+    }
+
+    public void toGameOver() {
+        Intent i = new Intent(this, GameOverActivity.class);
+        startActivity(i);
     }
 }

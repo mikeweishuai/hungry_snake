@@ -20,7 +20,10 @@
             android:name=".SnakeActivity"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-        <activity android:name=".GameOverActivity"></activity>
+        <activity
+            android:name=".GameOverActivity"
+            android:screenOrientation="portrait"
+            ></activity>
     </application>
 
 </manifest>

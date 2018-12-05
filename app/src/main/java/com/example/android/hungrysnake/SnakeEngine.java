@@ -273,7 +273,8 @@ class SnakeEngine extends SurfaceView implements Runnable {
 
                     // Stuff that updates the UI
 
-                    myActivity.setContentView(R.layout.activity_game_over);
+                    Intent i = new Intent(myActivity, GameOverActivity.class);
+                    myActivity.startActivity(i);
                 }
             });
 
