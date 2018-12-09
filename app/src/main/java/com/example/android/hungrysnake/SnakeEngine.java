@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Point;
-import android.media.AudioManager;
-import android.media.SoundPool;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -28,10 +26,6 @@ class SnakeEngine extends SurfaceView implements Runnable {
     // To hold a reference to the Activity
     private Context context;
 
-    // for plaing sound effects
-    private SoundPool soundPool;
-    private int eat_bob = -1;
-    private int snake_crash = -1;
 
     // For tracking movement Heading
     public enum Heading {UP, RIGHT, DOWN, LEFT}
@@ -100,24 +94,6 @@ class SnakeEngine extends SurfaceView implements Runnable {
         // How many blocks of the same size will fit into the height
         numBlocksHigh = screenY / blockSize;
 
-        // Set the sound up
-        soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
-        try {
-            // Create objects of the 2 required classes
-            // Use m_Context because this is a reference to the Activity
-            AssetManager assetManager = context.getAssets();
-            AssetFileDescriptor descriptor;
-
-            // Prepare the two sounds in memory
-            descriptor = assetManager.openFd("get_mouse_sound.ogg");
-            eat_bob = soundPool.load(descriptor, 0);
-
-            descriptor = assetManager.openFd("death_sound.ogg");
-            snake_crash = soundPool.load(descriptor, 0);
-
-        } catch (IOException e) {
-            // Error
-        }
 
 
         // Initialize the drawing objects
@@ -194,7 +170,6 @@ class SnakeEngine extends SurfaceView implements Runnable {
         spawnBob();
         //add to the score
         score = score + 1;
-        soundPool.play(eat_bob, 1, 1, 0, 0, 1);
     }
 
     private void moveSnake(){
@@ -277,8 +252,6 @@ class SnakeEngine extends SurfaceView implements Runnable {
                     myActivity.startActivity(i);
                 }
             });
-
-//            newGame();
         }
     }
 
@@ -287,10 +260,10 @@ class SnakeEngine extends SurfaceView implements Runnable {
         if (surfaceHolder.getSurface().isValid()) {
             canvas = surfaceHolder.lockCanvas();
 
-            // Fill the screen with Game Code School blue
-            canvas.drawColor(Color.argb(255, 26, 128, 182));
+            // Background color
+            canvas.drawColor(Color.argb(255, 255, 106, 106));
 
-            // Set the color of the paint to draw the snake white
+            // Snake color
             paint.setColor(Color.argb(255, 255, 255, 255));
 
             // Scale the HUD text

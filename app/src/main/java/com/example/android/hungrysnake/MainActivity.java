@@ -21,10 +21,10 @@ public class MainActivity extends Activity {
 
         Spinner mSpinner = (Spinner)findViewById(R.id.difficultySpinner);
         ArrayList<String> list = new ArrayList<String>();
-        list.add("1");
-        list.add("2");
-        list.add("3");
-        list.add("4");
+        list.add("Baby");
+        list.add("Teenager");
+        list.add("Adult");
+        list.add("Dark Souls");
 
         //为下拉列表定义一个适配器
         final ArrayAdapter<String> ad = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, list);
@@ -49,6 +49,12 @@ public class MainActivity extends Activity {
 
     public void openSnakeGame(View view) {
         Intent i = new Intent(this, SnakeActivity.class);
+        //用Bundle携带数据
+        Bundle bundle=new Bundle();
+        //传递name参数为tinyphp
+        bundle.putString("difficulty", "tinyphp");
+        i.putExtras(bundle);
+
         startActivity(i);
     }
 }

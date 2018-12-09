@@ -11,6 +11,7 @@ import android.view.Display;
 public class SnakeActivity extends Activity {
 
     SnakeEngine mSnakeEngine;
+    String difficulty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
