@@ -42,7 +42,7 @@ class SnakeEngine extends SurfaceView implements Runnable {
     // How long is the snake
     private int snakeLength;
 
-    // Where is Bob hiding?
+    // The position of the apple (bob)
     private int bobX;
     private int bobY;
 
@@ -259,6 +259,7 @@ class SnakeEngine extends SurfaceView implements Runnable {
                 @Override
                 public void run() {
                     Intent i = new Intent(myActivity, GameOverActivity.class);
+                    i.putExtra("score", score);
                     myActivity.startActivity(i);
                 }
             });
