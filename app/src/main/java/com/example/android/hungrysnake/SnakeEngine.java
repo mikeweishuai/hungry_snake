@@ -308,10 +308,12 @@ class SnakeEngine extends SurfaceView implements Runnable {
             Bitmap background = BitmapFactory.decodeResource(myActivity.getResources(),R.mipmap.background);
             Bitmap snakeBody = BitmapFactory.decodeResource(myActivity.getResources(),R.mipmap.snake_body);
             Bitmap apple = BitmapFactory.decodeResource(myActivity.getResources(), R.mipmap.apple);
+            Bitmap cloud = BitmapFactory.decodeResource(myActivity.getResources(), R.mipmap.cloud);
 
             // 指定图片绘制区域
             Rect srcBg = new Rect(0,0,background.getWidth(),background.getHeight());
             Rect srcSnake = new Rect(0, 0, snakeBody.getWidth(), snakeBody.getHeight());
+            Rect srcCloud = new Rect(0, 0, cloud.getWidth(), cloud.getHeight());
 
 
             // 指定图片在屏幕上显示的区域
@@ -321,6 +323,10 @@ class SnakeEngine extends SurfaceView implements Runnable {
                     (appleY * blockSize),
                     (appleX * blockSize) + blockSize,
                     (appleY * blockSize) + blockSize);
+            Rect dstCloud = new Rect(cloudX * blockSize,
+                    (cloudY * blockSize),
+                    (cloudX * blockSize) + blockSize * cloudWidth,
+                    (cloudY * blockSize) + blockSize * cloudHeight);
 
             //Determine which way the snake is heading
             Bitmap snakeHead;
@@ -353,14 +359,15 @@ class SnakeEngine extends SurfaceView implements Runnable {
                 canvas.drawBitmap(snakeBody,srcSnake, dstSnake,new Paint());
             }
 
+            canvas.drawBitmap(cloud, srcCloud, dstCloud, new Paint());
 
-            paint.setColor(Color.argb(255, 100, 100, 100));
-            // Draw the cloud
-            // Intend to block the sight of the snake
-            canvas.drawRect(cloudX * blockSize,
-                    (cloudY * blockSize),
-                    (cloudX * blockSize) + blockSize * cloudWidth,
-                    (cloudY * blockSize) + blockSize * cloudHeight, paint);
+//            paint.setColor(Color.argb(255, 100, 100, 100));
+//            // Draw the cloud
+//            // Intend to block the sight of the snake
+//            canvas.drawRect(cloudX * blockSize,
+//                    (cloudY * blockSize),
+//                    (cloudX * blockSize) + blockSize * cloudWidth,
+//                    (cloudY * blockSize) + blockSize * cloudHeight, paint);
 
             // Wall color
             paint.setColor(Color.argb(255, 113, 64, 43));
