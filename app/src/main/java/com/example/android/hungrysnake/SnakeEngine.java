@@ -56,7 +56,7 @@ class SnakeEngine extends SurfaceView implements Runnable {
     // Control pausing between updates
     private long nextFrameTime;
     // Update the game 10 times per second
-    private final long FPS = 7;
+    private final long FPS;
     // There are 1000 milliseconds in a second
     private final long MILLIS_PER_SECOND = 1000;
     // We will draw the frame much more often
@@ -83,12 +83,21 @@ class SnakeEngine extends SurfaceView implements Runnable {
 
     private Activity myActivity;
 
-    public SnakeEngine(Context context, Point size, Activity activity, AttributeSet attrs) {
+    public SnakeEngine(Context context, Point size, Activity activity, AttributeSet attrs,
+                       String difficulty) {
         super(context, attrs);
         myActivity = activity;
 
         context = context;
 
+        //initialize FPS as the difficulty
+        if (difficulty.equals("easy")) {
+            FPS = 4;
+        } else if (difficulty.equals("medium")) {
+            FPS = 10;
+        } else {
+            FPS = 30;
+        }
         screenX = size.x;
         screenY = size.y;
 
@@ -264,14 +273,20 @@ class SnakeEngine extends SurfaceView implements Runnable {
             //读取自己的图片
             Bitmap background = BitmapFactory.decodeResource(myActivity.getResources(),R.mipmap.background);
             Bitmap snakeBody = BitmapFactory.decodeResource(myActivity.getResources(),R.mipmap.snake_body);
+            Bitmap apple = BitmapFactory.decodeResource(myActivity.getResources(), R.mipmap.apple);
 
             // 指定图片绘制区域
             Rect srcBg = new Rect(0,0,background.getWidth(),background.getHeight());
             Rect srcSnake = new Rect(0, 0, snakeBody.getWidth(), snakeBody.getHeight());
 
+
             // 指定图片在屏幕上显示的区域
             // 背景的区域（全屏）background
             Rect dstBg = new Rect(0,0,screenX,screenY);
+            Rect dstApple = new Rect(bobX * blockSize,
+                    (bobY * blockSize),
+                    (bobX * blockSize) + blockSize,
+                    (bobY * blockSize) + blockSize);
 
             //Determine which way the snake is heading
             Bitmap snakeHead;
@@ -306,8 +321,8 @@ class SnakeEngine extends SurfaceView implements Runnable {
 
 
 
-            // Snake color
-            paint.setColor(Color.argb(255, 255, 255, 255));
+            // Score text color
+            paint.setColor(Color.argb(255, 139, 71, 38));
 
             // Scale the HUD text
             paint.setTextSize(90);
@@ -317,11 +332,7 @@ class SnakeEngine extends SurfaceView implements Runnable {
             paint.setColor(Color.argb(255, 255, 0, 0));
 
             // Draw Bob
-            canvas.drawRect(bobX * blockSize,
-                    (bobY * blockSize),
-                    (bobX * blockSize) + blockSize,
-                    (bobY * blockSize) + blockSize,
-                    paint);
+            canvas.drawBitmap(apple, srcSnake, dstApple, new Paint());
 
             // Unlock the canvas and reveal the graphics for this frame
             surfaceHolder.unlockCanvasAndPost(canvas);

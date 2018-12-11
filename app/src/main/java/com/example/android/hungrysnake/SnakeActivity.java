@@ -11,11 +11,14 @@ import android.view.Display;
 public class SnakeActivity extends Activity {
 
     SnakeEngine mSnakeEngine;
-    String difficulty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // get the difficulty
+        Intent i = getIntent();
+        String difficulty = i.getStringExtra("difficulty");
 
         // Get the pixel dimensions of the screen
         Display display = getWindowManager().getDefaultDisplay();
@@ -25,7 +28,7 @@ public class SnakeActivity extends Activity {
         display.getSize(size);
 
         // Create a new instance of the SnakeEngine class
-        mSnakeEngine = new SnakeEngine(this, size, this, null);
+        mSnakeEngine = new SnakeEngine(this, size, this, null, difficulty);
 
         // Make snakeEngine the view of the Activity
         setContentView(mSnakeEngine);
