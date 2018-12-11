@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -47,7 +50,7 @@ class SnakeEngine extends SurfaceView implements Runnable {
     private int blockSize;
 
     // The size in segments of the playable area
-    private final int NUM_BLOCKS_WIDE = 40;
+    private final int NUM_BLOCKS_WIDE = 20;
     private int numBlocksHigh;
 
     // Control pausing between updates
@@ -260,8 +263,16 @@ class SnakeEngine extends SurfaceView implements Runnable {
         if (surfaceHolder.getSurface().isValid()) {
             canvas = surfaceHolder.lockCanvas();
 
-            // Background color
-            canvas.drawColor(Color.argb(255, 255, 106, 106));
+            //读取自己的图片
+            Bitmap testImage = BitmapFactory.decodeResource(myActivity.getResources(),R.mipmap.background);
+            // 指定图片绘制区域(全部）
+            Rect src = new Rect(0,0,testImage.getWidth(),testImage.getHeight());
+
+            // 指定图片在屏幕上显示的区域
+            Rect dst = new Rect(0,0,screenX,screenY);
+
+            // 绘制图片（作为背景）
+            canvas.drawBitmap(testImage,src, dst,new Paint());
 
             // Snake color
             paint.setColor(Color.argb(255, 255, 255, 255));
@@ -345,6 +356,7 @@ class SnakeEngine extends SurfaceView implements Runnable {
                         case RIGHT:
                             heading = Heading.UP;
                             break;
+
                     }
                 }
         }
