@@ -3,7 +3,6 @@ package com.example.android.hungrysnake;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
@@ -12,23 +11,19 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import java.io.IOException;
 import java.util.Random;
-import android.content.res.AssetManager;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.view.View;
 
 
 class SnakeEngine extends SurfaceView implements Runnable {
 
-    // Our game thread for the main game loop
+    // Thread for the game
     private Thread thread = null;
 
     // To hold a reference to the Activity
     private Context context;
-
 
     // For tracking movement Heading
     public enum Heading {UP, RIGHT, DOWN, LEFT}
@@ -42,9 +37,14 @@ class SnakeEngine extends SurfaceView implements Runnable {
     // How long is the snake
     private int snakeLength;
 
-    // The position of the apple (bob)
-    private int bobX;
-    private int bobY;
+    // The position of the apple
+    private int appleX;
+    private int appleY;
+
+    // The position of the wall
+    private int wallX;
+    private int wallY;
+    private int wallLength = 10;
 
     // The size in pixels of a snake segment
     private int blockSize;
@@ -56,10 +56,9 @@ class SnakeEngine extends SurfaceView implements Runnable {
     // Control pausing between updates
     private long nextFrameTime;
     // Update the game 10 times per second
-    private final long FPS;
+    private long FPS = 1;
     // There are 1000 milliseconds in a second
     private final long MILLIS_PER_SECOND = 1000;
-    // We will draw the frame much more often
 
     // How many points does the player have
     private int score;
@@ -95,8 +94,9 @@ class SnakeEngine extends SurfaceView implements Runnable {
             FPS = 4;
         } else if (difficulty.equals("medium")) {
             FPS = 10;
-        } else {
-            FPS = 30;
+        } else if (difficulty.equals("hard")){
+            // This does not work due to unknown reason
+            FPS = 60;
         }
         screenX = size.x;
         screenY = size.y;
@@ -157,8 +157,11 @@ class SnakeEngine extends SurfaceView implements Runnable {
         snakeXs[0] = NUM_BLOCKS_WIDE / 2;
         snakeYs[0] = numBlocksHigh / 2;
 
-        // Get Bob ready for dinner
-        spawnBob();
+        // Set the wall
+        spawnWall();
+
+        // Randomly put the apple
+        spawnApple();
 
         // Reset the score
         score = 0;
@@ -167,19 +170,23 @@ class SnakeEngine extends SurfaceView implements Runnable {
         nextFrameTime = System.currentTimeMillis();
     }
 
-    public void spawnBob() {
+    public void spawnApple() {
         Random random = new Random();
-        bobX = random.nextInt(NUM_BLOCKS_WIDE - 1) + 1;
-        bobY = random.nextInt(numBlocksHigh - 1) + 1;
+        appleX = random.nextInt(NUM_BLOCKS_WIDE - 1) + 1;
+        appleY = random.nextInt(numBlocksHigh - 1) + 1;
     }
 
-    private void eatBob(){
-        //  Got him!
+    public void spawnWall() {
+        Random random = new Random();
+        wallX = random.nextInt(NUM_BLOCKS_WIDE - wallLength - 1) + 1;
+        wallY = random.nextInt(numBlocksHigh - 1) + 1;
+    }
+
+    private void eatApple(){
         // Increase the size of the snake
         snakeLength++;
-        //replace Bob
-        // This reminds me of Edge of Tomorrow. Oneday Bob will be ready!
-        spawnBob();
+        // Replace apple
+        spawnApple();
         //add to the score
         score = score + 1;
     }
@@ -242,13 +249,24 @@ class SnakeEngine extends SurfaceView implements Runnable {
             }
         }
 
+        // Hit the wall
+        Boolean hitX = false;
+        for (int i = wallX; i < wallLength + wallX; i++) {
+            if (snakeXs[0] == i) {
+                hitX = true;
+            }
+        }
+        if (hitX && snakeYs[0] == wallY) {
+            dead = true;
+        }
+
         return dead;
     }
 
     public void update() {
-        // Did the head of the snake eat Bob?
-        if (snakeXs[0] == bobX && snakeYs[0] == bobY) {
-            eatBob();
+        // If the snake eat the apple
+        if (snakeXs[0] == appleX && snakeYs[0] == appleY) {
+            eatApple();
         }
 
         moveSnake();
@@ -271,7 +289,7 @@ class SnakeEngine extends SurfaceView implements Runnable {
         if (surfaceHolder.getSurface().isValid()) {
             canvas = surfaceHolder.lockCanvas();
 
-            //读取自己的图片
+            //读取自己的图片 read png from res
             Bitmap background = BitmapFactory.decodeResource(myActivity.getResources(),R.mipmap.background);
             Bitmap snakeBody = BitmapFactory.decodeResource(myActivity.getResources(),R.mipmap.snake_body);
             Bitmap apple = BitmapFactory.decodeResource(myActivity.getResources(), R.mipmap.apple);
@@ -282,12 +300,12 @@ class SnakeEngine extends SurfaceView implements Runnable {
 
 
             // 指定图片在屏幕上显示的区域
-            // 背景的区域（全屏）background
+            // 背景的区域（全屏）background area
             Rect dstBg = new Rect(0,0,screenX,screenY);
-            Rect dstApple = new Rect(bobX * blockSize,
-                    (bobY * blockSize),
-                    (bobX * blockSize) + blockSize,
-                    (bobY * blockSize) + blockSize);
+            Rect dstApple = new Rect(appleX * blockSize,
+                    (appleY * blockSize),
+                    (appleX * blockSize) + blockSize,
+                    (appleY * blockSize) + blockSize);
 
             //Determine which way the snake is heading
             Bitmap snakeHead;
@@ -301,7 +319,7 @@ class SnakeEngine extends SurfaceView implements Runnable {
                 snakeHead = BitmapFactory.decodeResource(myActivity.getResources(),R.mipmap.snake_head_down);
             }
 
-            // 绘制图片（作为背景）
+            // 绘制图片（作为背景）Draw the background
             canvas.drawBitmap(background,srcBg, dstBg,new Paint());
 
             // Draw the snake head
@@ -320,6 +338,15 @@ class SnakeEngine extends SurfaceView implements Runnable {
                 canvas.drawBitmap(snakeBody,srcSnake, dstSnake,new Paint());
             }
 
+            // Wall color
+            paint.setColor(Color.argb(255, 93, 34, 37));
+            // draw the wall
+            for (int i = 0; i < wallLength; i++) {
+                canvas.drawRect(wallX * blockSize + i * blockSize,
+                        (wallY * blockSize),
+                        (wallX * blockSize) + blockSize + i * blockSize,
+                        (wallY * blockSize) + blockSize, paint);
+            }
 
 
             // Score text color
@@ -329,10 +356,7 @@ class SnakeEngine extends SurfaceView implements Runnable {
             paint.setTextSize(90);
             canvas.drawText("Score:" + score, 10, 70, paint);
 
-            // Set the color of the paint to draw Bob red
-            paint.setColor(Color.argb(255, 255, 0, 0));
-
-            // Draw Bob
+            // Draw Apple
             canvas.drawBitmap(apple, srcSnake, dstApple, new Paint());
 
             // Unlock the canvas and reveal the graphics for this frame
@@ -359,6 +383,7 @@ class SnakeEngine extends SurfaceView implements Runnable {
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
+
         // I don't know why i cannot write default case here
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_UP:
