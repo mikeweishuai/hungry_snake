@@ -1,17 +1,29 @@
-# hungry_snake
-A simple snake game.
-Though the "snake" looks more like a worm and eats apples.
-Currently I put all my external images in the mipmap respository for convienence, will fix that at some time in the future...
+hungry_snake
+===
 
-Current capabilities:
-  * simple snake game with score
-  * single difficulty
-  * able to restart after gameover
-   * display score on the gameover page
-  * Player can select difficulties at the beginning
+A snake game.
+Though the "snake" looks more like a worm and eats apples.
+
+### Gameplay Features
+>This is a snake game with some new features. You can view your score at the up left corner. There are three difficulties for the game: easy, medium, and hard.
+>* For 'easy' mode, this game acts just like any other simple snake game: A snake, and an apple. The snake will grow longer each time it swallows an apple. And it will die if it hit the boundary or eat itself.
+>* For 'medium' mode, the snake moves much faster. And there will be a wall that randomly locates in the map. Don't hit the wall!
+>* For 'hard' mode, things become much harder. The snake will move slightly faster and there will be a cloud: You cannot see the snake when the snake is under a cloud. However, you still able to see the apple and the wall above the cloud (though make nosense in real life...).
+
+### Graphic Features
+>The snake is not filled with pure color with a shape of rectangle, instead, I made some art resource by myself for it (including snake itself, cloud, background, title). The head of snake can change its orientation everytime the player change the direction.
+
+### Reference
+>The development of SnakeEngine is based on this [Tutorial](http://gamecodeschool.com/android/coding-a-snake-game-for-android/).
+
+Current issues:
+  * Currently I put all my external images in the mipmap respository for convienence, will fix that at some time in the future...
+  * Sometimes the apple spawns inside of the wall or snakeboby.
+  * The FPS doesn't work as I wish, seems like it cannot go beyond 10.
   
 Future capabilities:
   * Score rank
+  * UI
   * etc
  
 Contributer: Mike Wei, Houji Zhou
