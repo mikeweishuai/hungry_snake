@@ -19,6 +19,9 @@ import android.graphics.Paint;
 
 class SnakeEngine extends SurfaceView implements Runnable {
 
+    // Current difficulty
+    private int difficulty;
+
     // Thread for the game
     private Thread thread = null;
 
@@ -97,10 +100,13 @@ class SnakeEngine extends SurfaceView implements Runnable {
 
         //initialize FPS as the difficulty
         if (difficulty.equals("easy")) {
+            this.difficulty = 1;
             FPS = 4;
         } else if (difficulty.equals("medium")) {
+            this.difficulty = 2;
             FPS = 10;
         } else if (difficulty.equals("hard")){
+            this.difficulty = 3;
             // This does not work due to unknown reason
             FPS = 60;
         }
@@ -304,30 +310,16 @@ class SnakeEngine extends SurfaceView implements Runnable {
         if (surfaceHolder.getSurface().isValid()) {
             canvas = surfaceHolder.lockCanvas();
 
-            //读取自己的图片 read png from res
+            // Draw Background
             Bitmap background = BitmapFactory.decodeResource(myActivity.getResources(),R.mipmap.background);
-            Bitmap snakeBody = BitmapFactory.decodeResource(myActivity.getResources(),R.mipmap.snake_body);
-            Bitmap apple = BitmapFactory.decodeResource(myActivity.getResources(), R.mipmap.apple);
-            Bitmap cloud = BitmapFactory.decodeResource(myActivity.getResources(), R.mipmap.cloud);
-
-            // 指定图片绘制区域
             Rect srcBg = new Rect(0,0,background.getWidth(),background.getHeight());
-            Rect srcSnake = new Rect(0, 0, snakeBody.getWidth(), snakeBody.getHeight());
-            Rect srcCloud = new Rect(0, 0, cloud.getWidth(), cloud.getHeight());
-
-
-            // 指定图片在屏幕上显示的区域
-            // 背景的区域（全屏）background area
             Rect dstBg = new Rect(0,0,screenX,screenY);
-            Rect dstApple = new Rect(appleX * blockSize,
-                    (appleY * blockSize),
-                    (appleX * blockSize) + blockSize,
-                    (appleY * blockSize) + blockSize);
-            Rect dstCloud = new Rect(cloudX * blockSize,
-                    (cloudY * blockSize),
-                    (cloudX * blockSize) + blockSize * cloudWidth,
-                    (cloudY * blockSize) + blockSize * cloudHeight);
+            canvas.drawBitmap(background,srcBg, dstBg,new Paint());
 
+
+            // Draw Snake
+            Bitmap snakeBody = BitmapFactory.decodeResource(myActivity.getResources(),R.mipmap.snake_body);
+            Rect srcSnake = new Rect(0, 0, snakeBody.getWidth(), snakeBody.getHeight());
             //Determine which way the snake is heading
             Bitmap snakeHead;
             if (heading == Heading.UP) {
@@ -339,17 +331,12 @@ class SnakeEngine extends SurfaceView implements Runnable {
             } else {
                 snakeHead = BitmapFactory.decodeResource(myActivity.getResources(),R.mipmap.snake_head_down);
             }
-
-            // 绘制图片（作为背景）Draw the background
-            canvas.drawBitmap(background,srcBg, dstBg,new Paint());
-
             // Draw the snake head
             Rect dstSnakeHead = new Rect(snakeXs[0] * blockSize,
                     (snakeYs[0] * blockSize),
                     (snakeXs[0] * blockSize) + blockSize,
                     (snakeYs[0] * blockSize) + blockSize);
             canvas.drawBitmap(snakeHead, srcSnake, dstSnakeHead,new Paint());
-
             // Area of the snake body (and drawing)
             for (int i = 1; i < snakeLength; i++) {
                 Rect dstSnake = new Rect(snakeXs[i] * blockSize,
@@ -359,24 +346,39 @@ class SnakeEngine extends SurfaceView implements Runnable {
                 canvas.drawBitmap(snakeBody,srcSnake, dstSnake,new Paint());
             }
 
-            canvas.drawBitmap(cloud, srcCloud, dstCloud, new Paint());
+            // Draw Cloud
+            if (difficulty > 2) {
+                Bitmap cloud = BitmapFactory.decodeResource(myActivity.getResources(), R.mipmap.cloud);
+                Rect srcCloud = new Rect(0, 0, cloud.getWidth(), cloud.getHeight());
+                Rect dstCloud = new Rect(cloudX * blockSize,
+                        (cloudY * blockSize),
+                        (cloudX * blockSize) + blockSize * cloudWidth,
+                        (cloudY * blockSize) + blockSize * cloudHeight);
+                // Draw the cloud
+                canvas.drawBitmap(cloud, srcCloud, dstCloud, new Paint());
+            }
 
-//            paint.setColor(Color.argb(255, 100, 100, 100));
-//            // Draw the cloud
-//            // Intend to block the sight of the snake
-//            canvas.drawRect(cloudX * blockSize,
-//                    (cloudY * blockSize),
-//                    (cloudX * blockSize) + blockSize * cloudWidth,
-//                    (cloudY * blockSize) + blockSize * cloudHeight, paint);
 
-            // Wall color
-            paint.setColor(Color.argb(255, 113, 64, 43));
-            // draw the wall
-            for (int i = 0; i < wallLength; i++) {
-                canvas.drawRect(wallX * blockSize + i * blockSize,
-                        (wallY * blockSize),
-                        (wallX * blockSize) + blockSize + i * blockSize,
-                        (wallY * blockSize) + blockSize, paint);
+            // Draw Apple
+            Bitmap apple = BitmapFactory.decodeResource(myActivity.getResources(), R.mipmap.apple);
+            Rect dstApple = new Rect(appleX * blockSize,
+                    (appleY * blockSize),
+                    (appleX * blockSize) + blockSize,
+                    (appleY * blockSize) + blockSize);
+            // Draw Apple
+            canvas.drawBitmap(apple, srcSnake, dstApple, new Paint());
+
+            // Draw Wall
+            if (difficulty > 1) {
+                // Wall color
+                paint.setColor(Color.argb(255, 113, 64, 43));
+                // draw the wall
+                for (int i = 0; i < wallLength; i++) {
+                    canvas.drawRect(wallX * blockSize + i * blockSize,
+                            (wallY * blockSize),
+                            (wallX * blockSize) + blockSize + i * blockSize,
+                            (wallY * blockSize) + blockSize, paint);
+                }
             }
 
 
@@ -386,9 +388,6 @@ class SnakeEngine extends SurfaceView implements Runnable {
             // Scale the HUD text
             paint.setTextSize(90);
             canvas.drawText("Score:" + score, 10, 70, paint);
-
-            // Draw Apple
-            canvas.drawBitmap(apple, srcSnake, dstApple, new Paint());
 
             // Unlock the canvas and reveal the graphics for this frame
             surfaceHolder.unlockCanvasAndPost(canvas);
