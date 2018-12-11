@@ -33,7 +33,7 @@ class SnakeEngine extends SurfaceView implements Runnable {
     // For tracking movement Heading
     public enum Heading {UP, RIGHT, DOWN, LEFT}
     // Start by heading to the right
-    private Heading heading = Heading.RIGHT;
+    private Heading heading = Heading.UP;
 
     // To hold the screen size in pixels
     private int screenX;
@@ -56,7 +56,7 @@ class SnakeEngine extends SurfaceView implements Runnable {
     // Control pausing between updates
     private long nextFrameTime;
     // Update the game 10 times per second
-    private final long FPS = 10;
+    private final long FPS = 7;
     // There are 1000 milliseconds in a second
     private final long MILLIS_PER_SECOND = 1000;
     // We will draw the frame much more often
@@ -144,7 +144,7 @@ class SnakeEngine extends SurfaceView implements Runnable {
 
     public void newGame() {
         // Start with a single snake segment
-        snakeLength = 1;
+        snakeLength = 3;
         snakeXs[0] = NUM_BLOCKS_WIDE / 2;
         snakeYs[0] = numBlocksHigh / 2;
 
@@ -264,15 +264,49 @@ class SnakeEngine extends SurfaceView implements Runnable {
             canvas = surfaceHolder.lockCanvas();
 
             //读取自己的图片
-            Bitmap testImage = BitmapFactory.decodeResource(myActivity.getResources(),R.mipmap.background);
-            // 指定图片绘制区域(全部）
-            Rect src = new Rect(0,0,testImage.getWidth(),testImage.getHeight());
+            Bitmap background = BitmapFactory.decodeResource(myActivity.getResources(),R.mipmap.background);
+            Bitmap snakeBody = BitmapFactory.decodeResource(myActivity.getResources(),R.mipmap.snake_body);
+
+            // 指定图片绘制区域
+            Rect srcBg = new Rect(0,0,background.getWidth(),background.getHeight());
+            Rect srcSnake = new Rect(0, 0, snakeBody.getWidth(), snakeBody.getHeight());
 
             // 指定图片在屏幕上显示的区域
-            Rect dst = new Rect(0,0,screenX,screenY);
+            // 背景的区域（全屏）background
+            Rect dstBg = new Rect(0,0,screenX,screenY);
+
+            //Determine which way the snake is heading
+            Bitmap snakeHead;
+            if (heading == Heading.UP) {
+                snakeHead = BitmapFactory.decodeResource(myActivity.getResources(),R.mipmap.snake_head_up);
+            } else if (heading == Heading.LEFT) {
+                snakeHead = BitmapFactory.decodeResource(myActivity.getResources(),R.mipmap.snake_head_left);
+            } else if (heading == Heading.RIGHT) {
+                snakeHead = BitmapFactory.decodeResource(myActivity.getResources(),R.mipmap.snake_head_right);
+            } else {
+                snakeHead = BitmapFactory.decodeResource(myActivity.getResources(),R.mipmap.snake_head_down);
+            }
 
             // 绘制图片（作为背景）
-            canvas.drawBitmap(testImage,src, dst,new Paint());
+            canvas.drawBitmap(background,srcBg, dstBg,new Paint());
+
+            // Draw the snake head
+            Rect dstSnakeHead = new Rect(snakeXs[0] * blockSize,
+                    (snakeYs[0] * blockSize),
+                    (snakeXs[0] * blockSize) + blockSize,
+                    (snakeYs[0] * blockSize) + blockSize);
+            canvas.drawBitmap(snakeHead, srcSnake, dstSnakeHead,new Paint());
+
+            // Area of the snake body (and drawing)
+            for (int i = 1; i < snakeLength; i++) {
+                Rect dstSnake = new Rect(snakeXs[i] * blockSize,
+                        (snakeYs[i] * blockSize),
+                        (snakeXs[i] * blockSize) + blockSize,
+                        (snakeYs[i] * blockSize) + blockSize);
+                canvas.drawBitmap(snakeBody,srcSnake, dstSnake,new Paint());
+            }
+
+
 
             // Snake color
             paint.setColor(Color.argb(255, 255, 255, 255));
@@ -280,15 +314,6 @@ class SnakeEngine extends SurfaceView implements Runnable {
             // Scale the HUD text
             paint.setTextSize(90);
             canvas.drawText("Score:" + score, 10, 70, paint);
-
-            // Draw the snake one block at a time
-            for (int i = 0; i < snakeLength; i++) {
-                canvas.drawRect(snakeXs[i] * blockSize,
-                        (snakeYs[i] * blockSize),
-                        (snakeXs[i] * blockSize) + blockSize,
-                        (snakeYs[i] * blockSize) + blockSize,
-                        paint);
-            }
 
             // Set the color of the paint to draw Bob red
             paint.setColor(Color.argb(255, 255, 0, 0));
