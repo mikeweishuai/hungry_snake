@@ -41,10 +41,16 @@ class SnakeEngine extends SurfaceView implements Runnable {
     private int appleX;
     private int appleY;
 
-    // The position of the wall
+    // The position and length of the wall
     private int wallX;
     private int wallY;
     private int wallLength = 10;
+
+    // The position and scale of the cloud
+    private int cloudX;
+    private int cloudY;
+    private int cloudWidth = 15;
+    private int cloudHeight = 15;
 
     // The size in pixels of a snake segment
     private int blockSize;
@@ -160,6 +166,9 @@ class SnakeEngine extends SurfaceView implements Runnable {
         // Set the wall
         spawnWall();
 
+        // Set the cloud
+        spawnCloud();
+
         // Randomly put the apple
         spawnApple();
 
@@ -180,6 +189,12 @@ class SnakeEngine extends SurfaceView implements Runnable {
         Random random = new Random();
         wallX = random.nextInt(NUM_BLOCKS_WIDE - wallLength - 1) + 1;
         wallY = random.nextInt(numBlocksHigh - 1) + 1;
+    }
+
+    public void spawnCloud() {
+        Random random = new Random();
+        cloudX = random.nextInt(NUM_BLOCKS_WIDE - cloudWidth - 1) + 1;
+        cloudY = random.nextInt(numBlocksHigh - cloudHeight - 1) + 1;
     }
 
     private void eatApple(){
@@ -338,8 +353,17 @@ class SnakeEngine extends SurfaceView implements Runnable {
                 canvas.drawBitmap(snakeBody,srcSnake, dstSnake,new Paint());
             }
 
+
+            paint.setColor(Color.argb(255, 100, 100, 100));
+            // Draw the cloud
+            // Intend to block the sight of the snake
+            canvas.drawRect(cloudX * blockSize,
+                    (cloudY * blockSize),
+                    (cloudX * blockSize) + blockSize * cloudWidth,
+                    (cloudY * blockSize) + blockSize * cloudHeight, paint);
+
             // Wall color
-            paint.setColor(Color.argb(255, 93, 34, 37));
+            paint.setColor(Color.argb(255, 113, 64, 43));
             // draw the wall
             for (int i = 0; i < wallLength; i++) {
                 canvas.drawRect(wallX * blockSize + i * blockSize,
