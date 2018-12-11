@@ -188,6 +188,7 @@ class SnakeEngine extends SurfaceView implements Runnable {
         }
 
         // Move the head in the appropriate heading
+        // I don't know why i cannot write default case here
         switch (heading) {
             case UP:
                 snakeYs[0]--;
@@ -225,7 +226,7 @@ class SnakeEngine extends SurfaceView implements Runnable {
             dead = true;
         }
 
-        // Eaten itself?
+        // Eaten itself
         for (int i = snakeLength - 1; i > 0; i--) {
             if ((i > 4) && (snakeXs[0] == snakeXs[i]) && (snakeYs[0] == snakeYs[i])) {
                 dead = true;
@@ -244,13 +245,10 @@ class SnakeEngine extends SurfaceView implements Runnable {
         moveSnake();
 
         if (detectDeath()) {
+            // jump to game over page
             myActivity.runOnUiThread(new Runnable() {
-
                 @Override
                 public void run() {
-
-                    // Stuff that updates the UI
-
                     Intent i = new Intent(myActivity, GameOverActivity.class);
                     myActivity.startActivity(i);
                 }
@@ -349,7 +347,7 @@ class SnakeEngine extends SurfaceView implements Runnable {
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
-
+        // I don't know why i cannot write default case here
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_UP:
                 if (motionEvent.getX() >= screenX / 2) {
