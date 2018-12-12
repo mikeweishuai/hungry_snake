@@ -169,12 +169,15 @@ class SnakeEngine extends SurfaceView implements Runnable {
         snakeXs[0] = NUM_BLOCKS_WIDE / 2;
         snakeYs[0] = numBlocksHigh / 2;
 
-        // Set the wall
-        spawnWall();
-
-        // Set the cloud
-        spawnCloud();
-
+        if (difficulty > 1) {
+            // Set the wall
+            spawnWall();
+            if (difficulty > 2) {
+                // Set the cloud
+                spawnCloud();
+            }
+        }
+        
         // Randomly put the apple
         spawnApple();
 
