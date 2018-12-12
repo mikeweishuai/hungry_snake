@@ -108,7 +108,7 @@ class SnakeEngine extends SurfaceView implements Runnable {
         } else if (difficulty.equals("hard")){
             this.difficulty = 3;
             // This does not work due to unknown reason
-            FPS = 8;
+            FPS = 10;
         }
         screenX = size.x;
         screenY = size.y;
