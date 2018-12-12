@@ -177,7 +177,7 @@ class SnakeEngine extends SurfaceView implements Runnable {
                 spawnCloud();
             }
         }
-        
+
         // Randomly put the apple
         spawnApple();
 
@@ -197,7 +197,7 @@ class SnakeEngine extends SurfaceView implements Runnable {
     public void spawnWall() {
         Random random = new Random();
         wallX = random.nextInt(NUM_BLOCKS_WIDE - wallLength - 1) + 1;
-        wallY = random.nextInt(numBlocksHigh - 1) + 1;
+        wallY = random.nextInt(numBlocksHigh / 2 - 1) + numBlocksHigh / 2;
     }
 
     public void spawnCloud() {
