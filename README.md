@@ -11,7 +11,7 @@ Though the "snake" looks more like a worm and eats apples.
 >* For 'hard' mode, things become much harder. The snake will move slightly faster and there will be a cloud: You cannot see the snake when the snake is under a cloud. However, you still able to see the apple and the wall above the cloud (though make nosense in real life...).
 
 ### Graphic Features
->The snake is not filled with pure color with a shape of rectangle, instead, We made some art resource by myself for it (including snake itself, cloud, background, title). 
+>The snake is not filled with pure color with a shape of rectangle, instead, We made some art resource by ourselves for it (including snake itself, cloud, background, title). 
 The head of snake can change its orientation everytime the player change the direction.
 
 ### Reference
