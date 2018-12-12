@@ -19,7 +19,7 @@ Though the "snake" looks more like a worm and eats apples.
 Current issues:
   * Currently I put all my external images in the mipmap respository for convienence, will fix that at some time in the future...
   * Sometimes the apple spawns inside of the wall or snakeboby.
-  * The FPS doesn't work as I wish, seems like it cannot go beyond 10.
+  * Sometimes the wall will spawn just ahead of the snake, which causes player die in one second.
   
 Future capabilities:
   * Score rank
