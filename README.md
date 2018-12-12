@@ -20,7 +20,6 @@ The head of snake can change its orientation everytime the player change the dir
 Current issues:
   * Currently I put all my external images in the mipmap respository for convienence, will fix that at some time in the future...
   * Sometimes the apple spawns inside of the wall or snakeboby.
-  * Sometimes the wall will spawn just ahead of the snake, which causes player die in one second.
   
 Future capabilities:
   * Score rank
