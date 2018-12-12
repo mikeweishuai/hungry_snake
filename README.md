@@ -11,7 +11,8 @@ Though the "snake" looks more like a worm and eats apples.
 >* For 'hard' mode, things become much harder. The snake will move slightly faster and there will be a cloud: You cannot see the snake when the snake is under a cloud. However, you still able to see the apple and the wall above the cloud (though make nosense in real life...).
 
 ### Graphic Features
->The snake is not filled with pure color with a shape of rectangle, instead, I made some art resource by myself for it (including snake itself, cloud, background, title). The head of snake can change its orientation everytime the player change the direction.
+>The snake is not filled with pure color with a shape of rectangle, instead, We made some art resource by ourselves for it (including snake itself, cloud, background, title). 
+The head of snake can change its orientation everytime the player change the direction.
 
 ### Reference
 >The development of SnakeEngine is based on this [Tutorial](http://gamecodeschool.com/android/coding-a-snake-game-for-android/).
@@ -19,7 +20,7 @@ Though the "snake" looks more like a worm and eats apples.
 Current issues:
   * Currently I put all my external images in the mipmap respository for convienence, will fix that at some time in the future...
   * Sometimes the apple spawns inside of the wall or snakeboby.
-  * The FPS doesn't work as I wish, seems like it cannot go beyond 10.
+  * Sometimes the wall will spawn just ahead of the snake, which causes player die in one second.
   
 Future capabilities:
   * Score rank
